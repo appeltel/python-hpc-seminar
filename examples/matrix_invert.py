@@ -5,7 +5,11 @@ performance relative to better tools such as numpy.
 The LUP decomposition and inversion functions are translated from C code
 in the wikipedia article: https://en.wikipedia.org/wiki/LU_decomposition
 The contributing author of this code appears to be anonymous.
+
+
 """
+import fractions
+import random
 
 
 def lup_decompose(A, tol=0.000001):
@@ -14,6 +18,9 @@ def lup_decompose(A, tol=0.000001):
 
     The result is stored in A as a single matrix which contains both
     matrices L-E and U as A=(L-E)+U such that P*A=L*U.
+
+    .. warning::
+       This function modifies the input matrix A!!!
 
     The permutation matrix is not stored as a matrix, but in an integer
     vector P of size N+1 containing column indexes where the
@@ -62,7 +69,7 @@ def lup_decompose(A, tol=0.000001):
     return P
 
 
-def lup_invert(LU, P, IA=None):
+def lup_invert(LU, P, IA=None, numeric_type=float):
     """
     Calculates the inverse of the LUP decomposed matrix LU, stores it in
     matrix IA and returns IA.
@@ -72,19 +79,20 @@ def lup_invert(LU, P, IA=None):
     :param list(int) P: The permutation matrix P as an integer vector
     :param list(list(float)) IA: Matrix to store the inverse. If None,
         a new matrix will be initialized.
+    :param type numeric_type: Numeric type of the matrix, defaults to float
     :returns: Inverted matrix
     :rtype: list(list(float))
     """
     n = len(LU)
     if IA is None:
-        IA = [[0.0] * n for _ in range(n)]
+        IA = [[numeric_type(0)] * n for _ in range(n)]
         
     for j in range(n):
         for i in range(n):
             if P[i] == j:
-                IA[i][j] = 1.0
+                IA[i][j] = numeric_type(1)
             else:
-                IA[i][j] = 0.0
+                IA[i][j] = numeric_type(0)
 
             for k in range(i):
                 IA[i][j] -= LU[i][k] * IA[k][j]
@@ -98,20 +106,33 @@ def lup_invert(LU, P, IA=None):
     return IA
 
 
+def generate_matrix(n, minval=-100., maxval=100.):
+    """
+    Generate a random square matrix of dimension n x n with values
+    taken from a uniform distribution
+
+    :param int n: matrix size
+    :param float minval: Minimum value for the uniform distribution
+    :param float maxval: Maximum value for the uniform distribution
+    """
+    result = []
+    for _ in range(n):
+        result.append([random.uniform(minval, maxval) for _ in range(n)])
+    return result
+
+
 if __name__ == '__main__':
 
-    A = [
-        [9., 2., 3.],
-        [4., 5., 6.],
-        [7., 8., 1.]
-    ]
-    print('Input test matrix:')
-    for row in A:
-        print(row)
+    print('Initial matrix:')
+    M = []
+    for _ in range(4):
+        row = [fractions.Fraction(random.randint(-10,10), 1) for _ in range(4)]
+        print('[ {} ]'.format(', '.join(str(f) for f in row)))
+        M.append(row)
+    
+    P = lup_decompose(M)
+    MI = lup_invert(M, P, numeric_type=fractions.Fraction)
 
-    P = lup_decompose(A)
-    IA = lup_invert(A, P)
-
-    print('Output inverse matrix:')
-    for row in IA:
-        print(row)
+    print('\nInverted Matrix:')
+    for row in MI:
+        print('[ {} ]'.format(', '.join(str(f) for f in row)))
