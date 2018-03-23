@@ -1,5 +1,8 @@
 """
-Invert a set of 4 300x300 matrices serially
+Invert a set of 4 300x300 matrices concurrently using threads
+
+Note: This does not work in parallel due to the CPython
+Global Interpreter Lock (GIL)
 """
 import datetime
 import random

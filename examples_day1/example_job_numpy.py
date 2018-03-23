@@ -1,9 +1,15 @@
 """
-Invert a set of 4 300x300 matrices serially
+Invert a set of 4 300x300 matrices using numpy for fast linear
+algebra and parallelism.
 """
 import datetime
+import random
 
 import numpy as np
+
+from matrix_invert import generate_matrix
+
+random.seed(42)
 
 
 # target function to invert matrices
@@ -11,9 +17,7 @@ def invert(matrix):
     return np.linalg.inv(matrix)
 
 # Generate the list of matrices
-input_matrices = [
-    np.random.uniform(low=-100., high=100., size=(300,300)) for _ in range(4)
-]
+input_matrices = [np.array(generate_matrix(300)) for _ in range(4)]
 
 # Timestamp when we begin
 before = datetime.datetime.utcnow()

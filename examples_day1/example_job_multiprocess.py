@@ -1,5 +1,9 @@
 """
-Invert a set of 4 300x300 matrices serially
+Invert a set of 4 300x300 matrices using multiprocessing.
+
+Note that this module is incorrect, each process has its
+own copy of the list in memory and does not update the list
+in the parent process.
 """
 import datetime
 import random

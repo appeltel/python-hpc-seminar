@@ -1,5 +1,9 @@
 """
-Invert a set of 4 300x300 matrices serially
+Invert a set of 4 300x300 matrices concurrently using threads,
+and use a queue to communicate between tasks.
+
+Note that this does not execute in parallel due to the CPython
+Global Interpreter Lock (GIL)
 """
 import datetime
 from queue import Queue

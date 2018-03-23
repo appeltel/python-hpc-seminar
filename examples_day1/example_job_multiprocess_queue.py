@@ -1,5 +1,9 @@
 """
-Invert a set of 4 300x300 matrices serially
+Invert a set of 4 300x300 matrices using multiprocessing and
+a queue.
+
+This runs in parallel, avoids the GIL, and communicates output
+via the queue.
 """
 import datetime
 import random
